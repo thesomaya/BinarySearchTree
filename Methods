@@ -1,0 +1,366 @@
+import java.util.Scanner;
+class BSnode 
+{
+    private int id;
+    private String name;
+    private double salary;
+    private BSnode right, left;
+
+	  // BST Consists of a series of nodes pointed to them by pointers 
+        public BSnode (int d, String n, double s, BSnode r, BSnode l) {
+        	// each node contains left & right pointers for next level nodes
+            id = d; 
+            name = n;
+            salary = s;
+            right = r;
+            left = l;
+        }    
+        public int getId () // returns the id number
+        {
+            return id;
+        }
+        public String getName () // returns the name
+        {
+            return name;
+        }
+        public double getSalary () // returns the salary
+        {
+            return salary;
+        }
+        public BSnode getRight () // returns the address of the right element
+        {
+            return right;
+        }
+        public BSnode getLeft () // returns the address of the left element
+        {
+            return left;
+        }
+        
+        public void setId (int d) // sets the id 
+        {
+            id = d;
+        }
+        public void setName (String n) // sets the name
+        {
+            name = n;
+        }
+        public void setSalary (double s) // sets the salary
+        {
+            salary = s;
+        }
+        public void setRight (BSnode r) // sets the address to the right element 
+        {
+            right = r;
+        }
+        public void setLeft (BSnode l) // sets the address to the left element 
+        {
+            left = l;
+        }
+        
+        public void printData () 
+        {
+            System.out.println("id = " + id);
+            System.out.println("name = " + name);
+            System.out.println("salary = " + salary);
+        }
+}
+
+class BSTree {
+    private BSnode root; // to point at first node in the tree
+	// default constructor
+    public BSTree () {
+        root = null; // initially empty tree
+    }
+    
+    public boolean isEmpty() // to check whether the tree is empty
+    {
+        if (root == null)
+            return true; 
+    
+        return false; 
+    }
+    
+    public boolean isFull () // to check whether the memory is full
+    {
+        // try adding a new  dummy element 
+        BSnode temp = new BSnode (10,"AA", 500, null, null);
+        if (temp == null) // if pointer temp is null, the element was not created
+            return true; // which means the memory is full, return true
+        temp = null; // delete the element as it is dummy
+        return false; // return false if not full
+    }
+
+    public BSnode Search (int d) { // to search for an element by ID
+        BSnode temp = root; 
+        if (temp == null)
+            return null;
+        while (temp != null) { // while temp hasn't reached the end yet    
+            if (temp.getId() == d) // we found it
+                return temp; // return the element address
+            if (d > temp.getId() ) // if the id is larger than id of temp , go right
+                temp = temp.getRight();
+            else
+                temp = temp.getLeft(); // else if the id id less than id of temp , go left
+        }
+        return null;
+    }
+    
+    public void insert (int d, String n, double s) { // a function to insert new elements    
+        if (isFull()) // checks for memory space
+        {
+            System.out.println("No memory."); 
+            return; 
+        } 
+        BSnode temp = root; 
+        if (isEmpty()) // calls isEmpty function to check if the tree is empty 
+        {
+            root = new BSnode (d,n,s,null,null); // let root equal to the new element
+            return;
+        }
+        // else, if not empty
+        BSnode pre = null; // declare pointer pre equal to null
+        while (temp != null) // while hasn't reached the end
+        {
+            if (d > temp.getId()) // if the ID of the new element is larger than temp id
+            {
+                pre = temp; // move pre to temp
+                temp = temp.getRight(); // and let temp equal to the next element from the right 
+            }
+            else if (d < temp.getId()) // if the ID of the new element is smaller than temp id
+            {
+                pre = temp; // move pre equal to temp
+                temp = temp.getLeft(); // and let temp equal to the next element from the left 
+            }
+            else {
+                System.out.println("This ID already exists.");
+                return;
+            }
+        } // end while loop
+        // the pointer pre is now at the element where we're gonna place the new element
+        temp = new BSnode (d,n,s,null,null); // create a new element, let temp points to
+        if (d > pre.getId()) // if the id of the new element is greater than the id of pre
+            pre.setRight(temp); // set the right of pre to temp (add the new element to the right)
+        else // if the id is smaller
+            pre.setLeft(temp);  // set the left of pre to temp (add the new element to the left)
+    }
+    
+    public void inOrder () // inOrder function using recursion
+    {
+        inOrder (root); // calls the function below, and sends root as a parameter 
+    }
+    public void inOrder (BSnode temp) // prints the elements of the tree (Left,Root,Right)
+    {
+        if (temp == null) 
+            return;
+        inOrder (temp.getLeft()); // calls the function inOrder, and sends temp.getLeft as a parameter
+        temp.printData(); // prints the element
+        inOrder(temp.getRight()); // calls the function inOrder, and sends temp.getRight as a parameter
+    }
+    
+    public void preOrder () // preOrder function using recursion
+    {
+        preOrder (root); // calls the function below, and sends root as a parameter
+    }
+    public void preOrder (BSnode temp) // prints the elements of the tree (Root,Left,Right)
+    {
+        if (temp == null)
+            return;
+        temp.printData(); // prints the element
+        preOrder (temp.getLeft()); // calls the function preOrder, and sends temp.getLeft as a parameter
+        preOrder(temp.getRight()); // calls the function preOrder, and sends temp.getRight as a parameter
+    }
+    
+    public void postOrder () /// postOrder function using recursion
+    {
+        postOrder (root); // calls the function below, and sends root as a parameter
+    }
+    public void postOrder (BSnode temp) //  prints the elements of the tree (Left,Right,Root)
+    {
+        if (temp == null)
+            return;
+        postOrder(temp.getLeft()); // calls the function postOrder, and sends temp.getLeft as a parameter
+        postOrder(temp.getRight()); // calls the function postOrder, and sends temp.getRight as a parameter
+        temp.printData(); // prints the element
+        
+    }
+    public int height () // height of tree using recursion
+    {
+        return height (root); 
+    }
+    public int height (BSnode temp) // a function to calculate the height of the tree
+    {
+        if (temp == null)
+            return 0;
+    
+    int r = height (temp.getRight()); // calls the function height, with temp.getRight as a parameter
+    int l = height (temp.getLeft()); // calls the function height, with temp.getLeft as a parameter
+    if (r > l) // checks whether the right or left is greater and returns the larger value plus one
+        return 1+r; 
+    else
+        return 1+l;
+    }
+    
+    public int level (int d) // level function using recursion 
+    {
+        return level (root, d, 0); 
+    }
+    public int level (BSnode temp, int d, int level) // a function that returns the level in which an ID is in
+    {
+        if (temp == null) // if there is no elements return -1 
+            return -1;
+        if (temp.getId() == d) // if we find the element, return level & stop
+            return level;
+        if (d > temp.getId()) // if the ID is larger
+            return level (temp.getRight(), d, level+1); // call the function and send temp.getRight, and add 1 to level
+        else
+            return level (temp.getLeft(), d, level+1); // call the function and send temp.getLeft, and add 1 to level
+        
+    }
+
+    public int countNodes() // counts the elements using recursion
+    {
+        return countNodes (root);
+    }
+    public int countNodes (BSnode temp) 
+    {
+        if (temp == null) // if temp equal to null return zero
+            return 0;
+        // calls the function (sends getRight and getLeft) and add the result untill the temp equals to null
+        return 1+countNodes(temp.getRight()) + countNodes(temp.getLeft()); 
+    }
+    public int countLeaves() // count Leaves (has no-children) using recursion
+    {
+        return countLeaves(root);
+    }
+    public int countLeaves(BSnode temp)
+    {
+        if (temp == null)
+            return 0;
+        // if both getRight and getLeft are null, then the element is a leave (not connected to any children)
+        if (temp.getLeft() == null && temp.getRight() == null) 
+            return 1;
+        return countLeaves (temp.getRight()) + countLeaves(temp.getLeft()); // adds the value every time
+    }
+    
+    public BSnode min(BSnode temp) // a function that gets the node of minimum ID 
+    {
+        // getLeft till we reach null
+        if (temp == null)
+            return null;
+        while (temp.getLeft() != null)
+            temp = temp.getLeft();
+        return temp;
+    }
+
+    public BSnode remove (int d) // remove using recursion 
+    {
+        return remove(root, d); 
+    }
+    public BSnode remove(BSnode temp, int d) // a function that removes an element
+    {
+        if (temp == null) // if reached null, and didn’t find 
+        {
+            System.out.println("Not found");
+            return null;
+        }
+        if (d > temp.getId()) // if the ID is greater than temp
+        {
+            temp.setRight(remove(temp.getRight(), d)); // setRight of temp equals to the function return 
+        }
+        else if (d < temp.getId())
+            temp.setLeft(remove(temp.getLeft(), d)); // setLeft of temp equals to the function return
+        else if (temp.getRight() == null) // if the Right is null, go Left
+            return temp.getLeft();
+        else if (temp.getLeft() == null) // if the Left is null, go right
+            return temp.getRight();
+        else // in case temp has two children
+        {
+            BSnode Min = min(temp.getRight()); // call the function min() with right of temp
+            temp.setId(Min.getId()); // change the ID
+            temp.setName(Min.getName());  // change the Name
+            temp.setSalary(Min.getSalary());  // change the Salary
+            temp.setRight(remove(temp.getRight(), Min.getId())); // call to remove the duplicate element
+        }
+        return temp;
+    }
+
+    public BSnode removeLeaves () // remove Leaves using recursion
+    {
+        return removeLeaves(root);
+    }
+    public BSnode removeLeaves(BSnode temp) // remove leaves (elements that their Right and Left are null)
+    {
+        if (temp.getLeft() == null && temp.getRight() == null) // if both Right and Left are null
+            return null; // return null
+        if (temp.getLeft() != null) // if getLeft not equal to null
+            temp.setLeft(removeLeaves(temp.getLeft())); // setLeft and call the function and getLeft 
+        if (temp.getRight() != null)
+            temp.setRight(removeLeaves(temp.getRight())); // setRight and call the function and getRight 
+        // once we find a leave, it will return null, and we will setRight / setLeft to null
+        return temp;   
+    }
+    
+    public void mirror () // mirror function using recursion
+    {
+        root = mirror(root);
+    }
+    public BSnode mirror (BSnode temp) // mirrors the binary tree (flips the sides of the tree)
+    {
+        if (temp == null)
+            return temp;
+        
+        // switching Right and Left
+        BSnode r = temp.getLeft(); // let pointer r equal to temp.getLeft (to store it)
+        temp.setLeft(temp.getRight()); // set left of temp points at right elements
+        temp.setRight(r); // setRight to r (which contains getLeft)
+        mirror (temp.getLeft()); // calls the function with a pointer to left tree
+        mirror (temp.getRight()); // calls the function and let temp equal to temp.getRight
+        return temp;
+    }
+}
+
+public class Main
+{
+	public static void main(String[] args) {
+		Scanner sc = new Scanner(System.in);
+		BSTree s1 = new BSTree ();
+		int d; String n; double s; 
+		
+		s1.insert(20, "s", 600);
+		s1.insert(13, "a", 500); 
+		s1.insert(40, "s", 400); 
+		s1.insert(15, "f", 700);
+		s1.insert(25, "a", 670);
+		s1.insert(30, "w", 400);
+		s1.insert(10, "q", 400); 
+
+		System.out.println("Printing inOrder: ");
+		s1.inOrder();
+		System.out.println("\nPrinting preOrder: ");
+		s1.preOrder();
+		System.out.println("\nPrinting postOrder: ");
+		s1.postOrder();
+		
+		
+		int h = s1.height();
+		System.out.println("height: " + h);
+		int t = s1.level(15);
+		System.out.println("Level: " + t);
+       	int c = s1.countNodes();
+        System.out.println("count Nodes: " + c);
+        int l = s1.countLeaves();
+        System.out.println("count Leaves: " + l);
+        
+       	s1.remove(13);
+        System.out.println();
+        s1.inOrder();
+        s1.removeLeaves();
+        
+        s1.mirror();
+        System.out.println();
+        s1.inOrder();
+		
+	}
+}
+
+
